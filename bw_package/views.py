@@ -1,21 +1,31 @@
+from flask import Flask, render_template, request, send_from_directory
+from flask_uploads import UploadSet, configure_uploads, IMAGES
+from .converter import convert_bw
+from PIL import Image
 import os
-from flask import Flask, render_template, request
+
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = os.path.basename('upload')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+photos = UploadSet('photos', IMAGES)
+app.config['UPLOAD_FOLDER'] = os.environ['UPLOAD_FOLDER']
+app.config['UPLOADED_PHOTOS_DEST'] = 'uploads'
+app.config['WTS_CSRF_ENABLED'] = True
+configure_uploads(app, photos)
 
-@app.route('/')
-def hello_world():
-    return render_template('index.html')
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST' and 'photo' in request.files:
+        uploaded_image = photos.save(request.files['photo'])
+        #colocar o caminho de onde a imagem foi upada como parametro
+        novo_arquivo = Image.open(uploads/uploaded_image)
+        novo_arquivo = convert_bw(novo_arquivo)
+        novo_arquivo.save('novo_arquivo.png')
+        return render_template('download.html', novo_arquivo = novo_arquivo)
+    return render_template('upload.html')
 
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    file = request.files['image']
-    f = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
 
-    # add your custom code to check that the uploaded file is a valid image and not a malicious file (out-of-scope for this post)
-    file.save(f)
-
-    return render_template('index.html')
+#passar <path:filename> como parametro da url ao inves do nome do arquivo
+@app.route("/uploads/<path:filename>")
+def uploads(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],filename, as_attachment=True)
