@@ -10,7 +10,6 @@ app = Flask(__name__)
 photos = UploadSet('photos', IMAGES)
 app.config['UPLOAD_FOLDER'] = os.environ['UPLOAD_FOLDER']
 app.config['UPLOADED_PHOTOS_DEST'] = 'uploads'
-app.config['WTS_CSRF_ENABLED'] = True
 configure_uploads(app, photos)
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -18,9 +17,10 @@ def upload():
     if request.method == 'POST' and 'photo' in request.files:
         uploaded_image = photos.save(request.files['photo'])
         #colocar o caminho de onde a imagem foi upada como parametro
-        novo_arquivo = Image.open(uploads/uploaded_image)
+        novo_arquivo = Image.open(uploaded_image)
         novo_arquivo = convert_bw(novo_arquivo)
-        novo_arquivo.save('novo_arquivo.png')
+        # Salva a imagem em preto e branco com o mesmo nome com que ela foi upada colorida
+        novo_arquivo.save('{}'.format(uploaded_image))
         return render_template('download.html', novo_arquivo = novo_arquivo)
     return render_template('upload.html')
 
