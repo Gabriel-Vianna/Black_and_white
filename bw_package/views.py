@@ -3,7 +3,7 @@ from flask_uploads import UploadSet, configure_uploads, IMAGES
 from .converter import convert_bw
 from PIL import Image
 import os
-
+import glob
 
 app = Flask(__name__)
 
@@ -16,12 +16,13 @@ configure_uploads(app, photos)
 def upload():
     if request.method == 'POST' and 'photo' in request.files:
         uploaded_image = photos.save(request.files['photo'])
-        #colocar o caminho de onde a imagem foi upada como parametro
-        novo_arquivo = Image.open(uploaded_image)
+        #Como passar o caminho correto da imagem na linha abaixo ?
+        novo_arquivo = Image.open('uploads/{}'.format(uploaded_image))
         novo_arquivo = convert_bw(novo_arquivo)
         #Salva a imagem em preto e branco com o sufixo "bw" na frente do nome com que ela foi upada
-        novo_arquivo.save('{}{}'.format("bw_" , uploaded_image))
-        return render_template('download.html', novo_arquivo = novo_arquivo)
+        novo_arquivo.save('{}{}{}'.format('uploads/',"bw_" , uploaded_image))
+        bw_image = '{}{}'.format("bw_" , uploaded_image)
+        return render_template('download.html', bw_image = bw_image)
     return render_template('upload.html')
 
 
