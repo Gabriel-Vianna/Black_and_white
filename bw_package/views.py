@@ -19,13 +19,12 @@ def upload():
         #colocar o caminho de onde a imagem foi upada como parametro
         novo_arquivo = Image.open(uploaded_image)
         novo_arquivo = convert_bw(novo_arquivo)
-        # Salva a imagem em preto e branco com o mesmo nome com que ela foi upada colorida
-        novo_arquivo.save('{}'.format(uploaded_image))
+        #Salva a imagem em preto e branco com o sufixo "bw" na frente do nome com que ela foi upada
+        novo_arquivo.save('{}{}'.format("bw_" , uploaded_image))
         return render_template('download.html', novo_arquivo = novo_arquivo)
     return render_template('upload.html')
 
 
-#passar <path:filename> como parametro da url ao inves do nome do arquivo
 @app.route("/uploads/<path:filename>")
 def uploads(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],filename, as_attachment=True)
