@@ -3,7 +3,6 @@ from flask_uploads import UploadSet, configure_uploads, IMAGES
 from .converter import convert_bw
 from PIL import Image
 import os
-import glob
 
 app = Flask(__name__)
 

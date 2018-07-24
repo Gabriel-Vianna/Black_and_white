@@ -1,6 +1,7 @@
 <html>
 <head>
 	<title>Upload</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
 </head>
 <body>
 <form method=POST enctype=multipart/form-data action="{{ url_for('upload') }}">
